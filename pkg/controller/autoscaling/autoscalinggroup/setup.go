@@ -28,6 +28,7 @@ func SetupAutoScalingGroup(mgr ctrl.Manager, o controller.Options) error {
 	name := managed.ControllerName(svcapitypes.AutoScalingGroupGroupKind)
 	opts := []option{
 		func(e *external) {
+			e.filterList = filterList
 			e.isUpToDate = isUpToDate
 			e.lateInitialize = lateInitialize
 			e.preObserve = preObserve
@@ -55,6 +56,17 @@ func SetupAutoScalingGroup(mgr ctrl.Manager, o controller.Options) error {
 			managed.WithRecorder(event.NewAPIRecorder(mgr.GetEventRecorderFor(
 				name))),
 			managed.WithConnectionPublishers(cps...)))
+}
+
+func filterList(cr *svcapitypes.AutoScalingGroup, obj *svcsdk.DescribeAutoScalingGroupsOutput) *svcsdk.DescribeAutoScalingGroupsOutput {
+	resp := &svcsdk.DescribeAutoScalingGroupsOutput{}
+	for _, asg := range obj.AutoScalingGroups {
+		if aws.StringValue(asg.AutoScalingGroupName) == meta.GetExternalName(cr) {
+			resp.AutoScalingGroups = append(resp.AutoScalingGroups, asg)
+			break
+		}
+	}
+	return resp
 }
 
 // nolint: gocyclo
