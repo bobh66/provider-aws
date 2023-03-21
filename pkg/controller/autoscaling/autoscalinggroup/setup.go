@@ -16,7 +16,7 @@ import (
 	"github.com/crossplane/crossplane-runtime/pkg/resource"
 	ctrl "sigs.k8s.io/controller-runtime"
 
-	svcapitypes "github.com/crossplane-contrib/provider-aws/apis/autoscaling/v1alpha1"
+	svcapitypes "github.com/crossplane-contrib/provider-aws/apis/autoscaling/v1beta1"
 	"github.com/crossplane-contrib/provider-aws/apis/v1alpha1"
 	aws "github.com/crossplane-contrib/provider-aws/pkg/clients"
 	awsclients "github.com/crossplane-contrib/provider-aws/pkg/clients"
@@ -45,6 +45,7 @@ func SetupAutoScalingGroup(mgr ctrl.Manager, o controller.Options) error {
 	return ctrl.NewControllerManagedBy(mgr).
 		Named(name).
 		WithOptions(o.ForControllerRuntime()).
+		WithEventFilter(resource.DesiredStateChanged()).
 		For(&svcapitypes.AutoScalingGroup{}).
 		Complete(managed.NewReconciler(mgr,
 			resource.ManagedKind(svcapitypes.AutoScalingGroupGroupVersionKind),
@@ -56,6 +57,7 @@ func SetupAutoScalingGroup(mgr ctrl.Manager, o controller.Options) error {
 			managed.WithConnectionPublishers(cps...)))
 }
 
+// nolint: gocyclo
 func isUpToDate(obj *svcapitypes.AutoScalingGroup, obs *svcsdk.DescribeAutoScalingGroupsOutput) (bool, error) {
 	in := obj.Spec.ForProvider
 	asg := obs.AutoScalingGroups[0]

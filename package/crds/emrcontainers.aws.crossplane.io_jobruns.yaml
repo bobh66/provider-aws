@@ -69,12 +69,12 @@ spec:
                   jobDriver:
                     description: The job driver for the job run.
                     properties:
-                      sparkSqlJobDriver:
+                      sparkSQLJobDriver:
                         description: The job driver for job type.
                         properties:
                           entryPoint:
                             type: string
-                          sparkSqlParameters:
+                          sparkSQLParameters:
                             type: string
                         type: object
                       sparkSubmitJobDriver:

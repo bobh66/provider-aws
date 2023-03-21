@@ -1,4 +1,3 @@
-model_name: cognito-idp
 ignore:
   resource_names:
     - UserImportJob

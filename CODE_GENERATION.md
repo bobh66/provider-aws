@@ -55,6 +55,8 @@ resources:
   "Distribution":
     api_versions:
     - name: "v1beta1"
+      served: true
+      storage: true
 ```
 If not overridden in the `generator-config.yaml` file, the default version generated is
 `v1alpha1`.
@@ -73,6 +75,8 @@ file called `apis/<serviceid>/v1alpha1/custom_types.go` with empty structs to ge
 the code to compile. For example, let's say you have a CRD whose kind is `Stage`.
 The empty struct would look like following:
 ```golang
+package v1alpha1
+
 // CustomStageParameters includes the custom fields of Stage.
 type CustomStageParameters struct{}
 ```
